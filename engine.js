@@ -225,27 +225,59 @@ W.assembled = (el) => {
 };
 
 
-/* שאלון בחירה כפויה · כל שאלה מעמידה שתי שפות זו מול זו */
+/* שאלון בחירה כפויה · שאלה אחת על המסך, לא חמש עשרה בטור */
 W.quiz = (el) => {
   const f = el.dataset.field, qs = window[el.dataset.options] || [];
-  el.className = 'pair quiz';
-  el.innerHTML = people(el).map((p,i)=>{
-    const ans = list(f,i), done = ans.filter(Boolean).length;
+  const P = people(el);
+  const total = qs.length;
+  const answered = i => list(f,i).filter(Boolean).length;
+  const doneAll = () => P.every((p,i)=> answered(i) === total);
+
+  /* איפה אנחנו עומדים. נשמר, כדי שאפשר יהיה לעצור ולחזור. */
+  let at = +(A[f+'_at'] || 0);
+  if(at < 0) at = 0; if(at > total-1) at = total-1;
+
+  const q = qs[at];
+  const bothHere = P.every((p,i)=> !!list(f,i)[at]);
+
+  if(doneAll() && el.dataset.collapsed === '1'){
+    el.className = 'quizdone';
+    el.innerHTML = `<p class="qdmsg">ענית על כל ${total} השאלות.</p>
+      <button type="button" class="cbtn" data-act="qreopen" data-f="${f}">לעבור עליהן שוב</button>`;
+    return;
+  }
+
+  const cols = P.map((p,i)=>{
+    const cur = list(f,i)[at] || '';
     return `<div>
       <div class="pname">${esc(p.name)||'·'}</div>
-      <div class="qzcount${done===qs.length?' full':''}">${done} מתוך ${qs.length}</div>
-      <ol class="qz">${qs.map((q,k)=>`
-        <li class="${ans[k]?'on':''}">
-          <span class="n">${String(k+1).padStart(2,'0')}</span>
-          <div class="two">
-            <button type="button" class="opt" data-act="quiz" data-f="${f}" data-i="${i}" data-k="${k}" data-v="${esc(q.a.id)}"
-              aria-pressed="${ans[k]===q.a.id}">${esc(rz(q.a.t,i))}</button>
-            <button type="button" class="opt" data-act="quiz" data-f="${f}" data-i="${i}" data-k="${k}" data-v="${esc(q.b.id)}"
-              aria-pressed="${ans[k]===q.b.id}">${esc(rz(q.b.t,i))}</button>
-          </div>
-        </li>`).join('')}</ol>
+      <div class="two">
+        <button type="button" class="opt" data-act="quiz" data-f="${f}" data-i="${i}" data-k="${at}" data-v="${esc(q.a.id)}"
+          aria-pressed="${cur===q.a.id}">${esc(rz(q.a.t,i))}</button>
+        <button type="button" class="opt" data-act="quiz" data-f="${f}" data-i="${i}" data-k="${at}" data-v="${esc(q.b.id)}"
+          aria-pressed="${cur===q.b.id}">${esc(rz(q.b.t,i))}</button>
+      </div>
     </div>`;
   }).join('');
+
+  const dots = qs.map((_,k)=>{
+    const full = P.every((p,i)=> !!list(f,i)[k]);
+    return `<button type="button" class="qdot${k===at?' now':''}${full?' full':''}"
+      data-act="qgo" data-f="${f}" data-k="${k}" title="שאלה ${k+1}"><i></i></button>`;
+  }).join('');
+
+  el.className = 'quizstep';
+  el.innerHTML = `
+    <div class="qhead">
+      <span class="qn">${String(at+1).padStart(2,'0')} <i>מתוך ${total}</i></span>
+      <div class="qdots">${dots}</div>
+    </div>
+    <div class="pair qcols">${cols}</div>
+    <div class="qnav">
+      <button type="button" class="cbtn" data-act="qprev" data-f="${f}" ${at===0?'disabled':''}>הקודמת</button>
+      <span class="qhint">${bothHere ? '' : (P.length>1 ? 'שניכם בוחרים, ואז ממשיכים' : 'בחרו אחת מהשתיים')}</span>
+      <button type="button" class="cbtn solid" data-act="qnext" data-f="${f}" ${at===total-1?'disabled':''}>הבאה</button>
+    </div>`;
 };
 
 /* הדירוג החי שנבנה מהשאלון */
@@ -899,9 +931,28 @@ document.addEventListener('click', e=>{
     const a = arr(d.f, +d.i), k = +d.k;
     a[k] = (a[k] === d.v ? '' : d.v);
     save(d.f);
-    const host = b.closest('[data-widget="quiz"]'); if(host) W.quiz(host);
+    const host = b.closest('[data-widget="quiz"]');
+    /* ברגע שכולם ענו על השאלה הזאת, עוברים הלאה מעצמנו */
+    if(host && a[k]){
+      const P = people(host), qs = window[host.dataset.options]||[];
+      const allHere = P.every((p,i)=> !!list(d.f,i)[k]);
+      if(allHere && k < qs.length-1){
+        A[d.f+'_at'] = k+1; saveAnswers();
+      }
+    }
+    if(host) W.quiz(host);
     document.querySelectorAll('[data-widget="rank"]').forEach(el=>W.rank(el));
     buildCard(); return; }
+  if(d.act==='qprev' || d.act==='qnext' || d.act==='qgo'){
+    const host = document.querySelector('[data-widget="quiz"][data-field="'+d.f+'"]');
+    const qs = host ? (window[host.dataset.options]||[]) : [];
+    let at = +(A[d.f+'_at'] || 0);
+    if(d.act==='qprev') at--; else if(d.act==='qnext') at++; else at = +d.k;
+    A[d.f+'_at'] = Math.max(0, Math.min(qs.length-1, at)); saveAnswers();
+    if(host) W.quiz(host); return; }
+  if(d.act==='qreopen'){
+    const host = document.querySelector('[data-widget="quiz"][data-field="'+d.f+'"]');
+    if(host){ host.dataset.collapsed='0'; A[d.f+'_at']=0; saveAnswers(); W.quiz(host); } return; }
   if(d.act==='dial'){
     setPair(d.f, +d.i, String(val(d.f,+d.i))===d.v ? '' : d.v);
     const host = b.closest('[data-widget="dial"]'); if(host) W.dial(host);

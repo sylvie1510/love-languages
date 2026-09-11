@@ -54,12 +54,17 @@ function buildICS(choice, names){
   const rule = RRULE[choice];
   if(!rule) return null;
   const start = nextSunday(), end = new Date(start.getTime() + 30*60000);
+  const home = (location.protocol === 'file:')
+    ? 'https://sylvie1510.github.io/love-languages/'
+    : location.origin + location.pathname.replace(/[^/]*$/, '');
   const desc = 'לשאול אחד את השנייה: מה ממלא אותי עכשיו, ומה השתנה מאז הפעם הקודמת.\\n' +
-               'ושלוש הפעולות של השבוע, כל אחד בשפה של השני.';
+               'ושלוש הפעולות של השבוע, כל אחד בשפה של השני.\\n\\n' +
+               'ואם משהו לא מאוזן, תחנה 06: ' + home + 'station-06.html';
   return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//sylvie//love-languages//HE','CALSCALE:GREGORIAN',
     'BEGIN:VEVENT','UID:lovelang-'+Date.now()+'@sylvie','DTSTAMP:'+stamp(new Date()),
     'DTSTART:'+stamp(start),'DTEND:'+stamp(end),'RRULE:'+rule,
     'SUMMARY:'+(names ? 'חמש שפות · '+names : 'חמש שפות · לשאול מחדש'),
+    'URL:'+home,
     'DESCRIPTION:'+desc,
     'BEGIN:VALARM','TRIGGER:-PT30M','ACTION:DISPLAY','DESCRIPTION:לשאול מחדש','END:VALARM',
     'END:VEVENT','END:VCALENDAR'].join('\r\n');
