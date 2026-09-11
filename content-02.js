@@ -18,6 +18,13 @@ var LANGS = [
   { id:'touch',   label:'מגע',          sub:'חיבוק · נשיקה · ידיים · מבט',    need:'הצורך בביטחון וקירבה' },
 ];
 
+/* ---------- כמה חסר · סולם מוחלט, לא בחירה כפויה ---------- */
+var DEFICIT = [
+  { id:'enough', short:'יש',  label:'יש לי מספיק' },
+  { id:'some',   short:'קצת', label:'חסר לי קצת' },
+  { id:'lots',   short:'מאוד', label:'חסר לי מאוד' },
+];
+
 /* ---------- שלושת סימני הזיהוי ---------- */
 /* הנתינה מדברת עליי · סימן [ ] */
 var CHIPS_GIVE = [
@@ -31,15 +38,6 @@ var CHIPS_COMPLAINT = [
   '״<אתה/את> תמיד בטלפון״','״אף פעם לא <אומר/אומרת> לי כלום״',
   '״<לא נוגע/לא נוגעת> בי בכלל״','״שוב שכחת״','״אני [עושה/עושה] הכול לבד״',
   '״לא אכפת לך ממני״',
-];
-
-/* ---------- מה הכי פוגע ---------- */
-var HURTS = [
-  { id:'words',   label:'ביקורת והקטנה',       sub:'משפט חד אחד שנשאר איתי ימים' },
-  { id:'time',    label:'שלא מקשיבים לי',       sub:'מבט שמוסט לטלפון באמצע משפט' },
-  { id:'gifts',   label:'שנשכח משהו שחשוב לי',  sub:'תאריך, הבטחה, משהו שסיפרתי' },
-  { id:'service', label:'שמתעלמים ממה שצריך',   sub:'ושוב הכול נופל עליי' },
-  { id:'touch',   label:'ריחוק פיזי',           sub:'תקופה בלי מגע, או גב שמופנה' },
 ];
 
 /* ---------- מה הכי פוגע · נכתב מנקודת המבט שלי, על מי שמולי ---------- */
@@ -59,13 +57,14 @@ var CARD = {
     field:'primary', guess:'guess', tank:'tank',
   },
   badge: {field:'primary', options:'LANGS'},
-  requires: {pair:['tank','guess','hurts']},
+  requires: {pair:['tank','guess','deficit']},
   blocks: [
     {type:'dial',        label:'הדלי שלי כרגע', field:'tank'},
+    {type:'deficit',     label:'ומה שהכי חסר לי עכשיו', field:'deficit', primary:'primary'},
     {type:'chips',       label:'מה אני [נותן/נותנת] הכי הרבה', field:'give'},
     {type:'chips',       label:'התלונה שחוזרת אצלי', field:'complaint'},
     {type:'note',        label:'הבקשה שאני [מבקש/מבקשת] הכי הרבה', field:'request'},
-    {type:'bankPartner', bank:'BANK_HURT', key:'hurts'},
+    {type:'bankPartner', bank:'BANK_HURT', key:'primary'},
     {type:'note',        label:'מה שלמדתי על עצמי', field:'learnedMe'},
     {type:'notePartner', label:'ומה שהבנתי על',     field:'learnedYou'},
   ],

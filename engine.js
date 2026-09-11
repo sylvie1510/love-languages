@@ -18,7 +18,7 @@ const STATION_KEY  = () => 'lovelang.st' + (window.STATION ? STATION.num : '00')
 
 /* שדות שנשמרים לכל האפליקציה ולא לתחנה בודדת.
    השפה שנבחרה בתחנה 01 צריכה להיות זמינה גם ב-02, ב-03 וב-04. */
-const GLOBAL_FIELDS = ['quiz','primary','guess','tank','intensity','loved','mygive','hurts'];
+const GLOBAL_FIELDS = ['quiz','primary','guess','tank','intensity','deficit','loved','mygive','hurts'];
 
 /* ---------- state ---------- */
 let C = {p:[{name:'',g:'f'},{name:'',g:'m'}]};   // עמודה 0 = היא · עמודה 1 = הוא
@@ -278,6 +278,28 @@ W.quiz = (el) => {
       <span class="qhint">${bothHere ? '' : (P.length>1 ? 'שניכם בוחרים, ואז ממשיכים' : 'בחרו אחת מהשתיים')}</span>
       <button type="button" class="cbtn solid" data-act="qnext" data-f="${f}" ${at===total-1?'disabled':''}>הבאה</button>
     </div>`;
+};
+
+/* כמה חסר לי · דירוג מוחלט לכל חמש השפות, לא בחירה כפויה.
+   השאלון אומר מה חשוב יותר ממה. זה אומר כמה חסר בפועל. */
+W.matrix = (el) => {
+  const f = el.dataset.field, rows = window[el.dataset.options] || [];
+  const opts = window[el.dataset.scale] || [];
+  el.className = 'pair';
+  el.innerHTML = people(el).map((p,i)=>{
+    const cur = list(f,i);
+    return `<div>
+      <div class="pname">${esc(p.name)||'·'}</div>
+      <table class="mtx"><tbody>
+        ${rows.map((r,k)=>`<tr>
+          <th>${esc(r.label)}</th>
+          ${opts.map(o=>`<td><button type="button" data-act="mtx" data-f="${f}" data-i="${i}" data-k="${k}" data-v="${esc(o.id)}"
+            aria-pressed="${cur[k]===o.id}" title="${esc(o.label)}"><span>${esc(o.short)}</span></button></td>`).join('')}
+        </tr>`).join('')}
+      </tbody></table>
+      <div class="mtxkey">${opts.map(o=>`<span><b>${esc(o.short)}</b> ${esc(o.label)}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
 };
 
 /* הדירוג החי שנבנה מהשאלון */
@@ -701,6 +723,29 @@ function buildCard(){
         const l = langBy(val(b.field,i)); if(!l) return '';
         return `<p class="early-p"><strong>${esc(rz(b.label,i))}</strong>${esc(l.label)} · ${esc(l.need)}</p>`;
       }
+      /* מה שהכי חסר · ולא בהכרח השפה העיקרית */
+      if(b.type==='deficit'){
+        const a = list(b.field,i), langs = window.LANGS||[];
+        const worst = [];
+        a.forEach((v,k)=>{ if(v==='lots' && langs[k]) worst.push(langs[k]); });
+        if(!worst.length) return '';
+        const prim = val(b.primary,i);
+        const names = worst.map(l=>l.label).join(' · ');
+        const off = worst.every(l=>l.id !== prim) && prim;
+        return `<div class="do${off?' guess':''}"><strong>${esc(rz(b.label,i))}</strong>${esc(names)}` +
+          (off ? `<p class="soloq">${esc(rz('[שים/שימי] לב: זו לא השפה העיקרית שלך. לפעמים העיקרית דווקא מקבלת מענה, ומה שמרעיב זה משהו אחר.',i))}</p>` : '') +
+          `</div>`;
+      }
+      /* מדידה חוזרת · אותו מדד, שתי נקודות בזמן */
+      if(b.type==='delta'){
+        const then = val(b.from,i), now = val(b.to,i);
+        if(!then || !now) return '';
+        const d2 = +now - +then;
+        const word = d2 > 0 ? 'עלה' : (d2 < 0 ? 'ירד' : 'לא זז');
+        const cls  = d2 > 0 ? 'ok' : (d2 < 0 ? 'miss' : '');
+        return `<p class="early-p delta ${cls}"><strong>${esc(rz(b.label,i))}</strong>` +
+          `${esc(then)} ← ${esc(now)} · ${esc(word)}${d2?' ב-'+Math.abs(d2):''}</p>`;
+      }
       /* חוגה */
       if(b.type==='dial'){
         const n = val(b.field, b.partner ? 1-i : i); if(!n) return '';
@@ -913,6 +958,19 @@ document.addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
   const d = b.dataset;
   if(d.act==='mode'){
+    /* יציאה מסולו · בטור השני יושבות השערות, לא תשובות. אסור שהן יתחזו. */
+    if(C.solo && d.v === 'pair'){
+      const guessed = ['loved','primary','tank','intensity','deficit','mygive','hurts','quiz']
+        .filter(f => filled((store(f)[f]||[])[1]));
+      if(guessed.length && !confirm(
+          'בטור השני יושבות ההשערות שלך, לא התשובות של מי שמולך.\n\n' +
+          'לנקות אותן כדי שימלא מאפס?\n\n' +
+          'אישור מנקה. ביטול משאיר אותן, והן ייראו כאילו הן שלו.')){
+        /* נשאר, אבל לפחות לא בשקט */
+      } else if(guessed.length){
+        guessed.forEach(f => { const S = store(f); if(Array.isArray(S[f])) S[f][1] = Array.isArray(S[f][1]) ? [] : ''; save(f); });
+      }
+    }
     C.solo = (d.v === 'solo');
     if(!C.solo){ C.p[0].g='f'; C.p[1].g='m'; }
     else { C.p[1].g = C.p[0].g === 'm' ? 'f' : 'm'; }
@@ -953,6 +1011,12 @@ document.addEventListener('click', e=>{
   if(d.act==='qreopen'){
     const host = document.querySelector('[data-widget="quiz"][data-field="'+d.f+'"]');
     if(host){ host.dataset.collapsed='0'; A[d.f+'_at']=0; saveAnswers(); W.quiz(host); } return; }
+  if(d.act==='mtx'){
+    const a = arr(d.f, +d.i), k = +d.k;
+    a[k] = (a[k] === d.v ? '' : d.v);
+    save(d.f);
+    const host = b.closest('[data-widget="matrix"]'); if(host) W.matrix(host);
+    buildCard(); return; }
   if(d.act==='dial'){
     setPair(d.f, +d.i, String(val(d.f,+d.i))===d.v ? '' : d.v);
     const host = b.closest('[data-widget="dial"]'); if(host) W.dial(host);
