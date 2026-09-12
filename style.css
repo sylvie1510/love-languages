@@ -1190,3 +1190,17 @@ a.station:focus-visible{outline-color:var(--terra)}
 }
 .q .pair input[type="text"],.q .pair textarea{background:var(--paper)}
 .q .pair input[type="text"]:focus,.q .pair textarea:focus{background:#fff}
+
+/* ---------- המשפט שמחזיק את הכול ---------- */
+.oneline{
+  font-weight:900;
+  font-size:clamp(1.5rem,1.15rem + 1.8vw,2.3rem);
+  line-height:1.3;letter-spacing:-.015em;
+  color:var(--ink);margin:0;
+  padding-inline-start:1.1rem;
+  border-inline-start:3px solid var(--terra);
+}
+.person .do.fit{background:var(--slate-wash);border-color:var(--slate)}
+.person .do.fit.ok strong{color:var(--slate)}
+.person .do.fit.miss{background:var(--terra-wash);border-color:var(--terra-soft)}
+.person .do.fit.miss strong{color:var(--terra)}

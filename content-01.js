@@ -138,6 +138,31 @@ var BANK_HURT = {
   touch:   'דחייה פיזית, או תקופה בלי מגע. זה נחווה אצלך כניתוק רגשי עמוק.',
 };
 
+/* ---------- התלונה · חץ שמצביע על הצורך ---------- */
+/* התלונה נאמרת אל בן או בת הזוג, ולכן סימן < > */
+var CHIPS_COMPLAINT = [
+  '״<אתה/את> אף פעם לא <עוזר/עוזרת> לי״',
+  '״אנחנו כבר לא מבלים יחד״',
+  '״<אתה/את> תמיד בטלפון״',
+  '״לא <אומר/אומרת> לי מילים יפות״',
+  '״<לא נוגע/לא נוגעת> בי בכלל״',
+  '״שוב שכחת״',
+  '״אני [עושה/עושה] הכול לבד״',
+  '״לא אכפת לך ממני״',
+];
+
+/* לאיזו שפה כל תלונה מצביעה. ריק = לא מצביעה על אחת מסוימת. */
+var COMPLAINT_LANG = {
+  '״<אתה/את> אף פעם לא <עוזר/עוזרת> לי״': 'service',
+  '״אנחנו כבר לא מבלים יחד״':              'time',
+  '״<אתה/את> תמיד בטלפון״':                'time',
+  '״לא <אומר/אומרת> לי מילים יפות״':        'words',
+  '״<לא נוגע/לא נוגעת> בי בכלל״':           'touch',
+  '״שוב שכחת״':                            'gifts',
+  '״אני [עושה/עושה] הכול לבד״':             'service',
+  '״לא אכפת לך ממני״':                     '',
+};
+
 /* ---------- הכרטיס ---------- */
 var CARD = {
   title: 'תחנה 01 · השפה שלי',
@@ -146,11 +171,13 @@ var CARD = {
     field:'primary', quiz:'quiz', intensity:'intensity', tank:'tank',
   },
   badge: {field:'primary', options:'LANGS'},
-  requires: {pair:['primary','intensity','tank']},
+  requires: {pair:['primary','intensity','tank','complaint']},
   blocks: [
     {type:'langMine',    label:'השפה העיקרית שלי', field:'primary'},
     {type:'dial',        label:'עוצמת הצורך', field:'intensity'},
     {type:'dial',        label:'הדלי שלי כרגע', field:'tank'},
+    {type:'chips',       label:'התלונה שחוזרת אצלי', field:'complaint'},
+    {type:'complaintFit', field:'complaint', map:'COMPLAINT_LANG', primary:'primary'},
     {type:'bank',        bank:'BANK_A',    key:'primary'},
     {type:'bank',        bank:'BANK_HURT', key:'primary'},
     {type:'langPartner', label:'ומה ש{שני} <צריך/צריכה> ממך', field:'primary'},

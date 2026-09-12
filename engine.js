@@ -821,6 +821,24 @@ function buildCard(){
         return `<p class="early-p delta ${cls}"><strong>${esc(rz(b.label,i))}</strong>` +
           `${esc(then)} ← ${esc(now)} · ${esc(word)}${d2?' ב-'+Math.abs(d2):''}</p>`;
       }
+      /* האם התלונה מצביעה על אותה שפה שנבחרה */
+      if(b.type==='complaintFit'){
+        const sel = list(b.field,i).filter(Boolean);
+        if(!sel.length) return '';
+        const map = window[b.map] || {};
+        const prim = val(b.primary,i);
+        const ids = [...new Set(sel.map(x => map[x]).filter(Boolean))];
+        if(!ids.length || !prim) return '';
+        const hit = ids.indexOf(prim) > -1;
+        const names = ids.map(id => langName(id)).filter(Boolean).join(' ו');
+        return hit
+          ? `<div class="do fit ok"><strong>${esc(rz('התלונה שלי והשפה שלי מדברות אותו דבר',i))}</strong>` +
+            `${esc(rz('מה שחוזר אצלך בתלונה מצביע בדיוק על ',i))}${esc(langName(prim))}. ` +
+            `${esc(rz('זה אומר שאת[ה/] כבר [אומר/אומרת] את זה בקול, רק בצורה שקשה לשמוע. אותה בקשה, בלי ההאשמה, תגיע הרבה יותר רחוק.',i))}</div>`
+          : `<div class="do fit miss"><strong>${esc(rz('התלונה שלי מצביעה למקום אחר',i))}</strong>` +
+            `${esc(rz('בחרת ',i))}${esc(langName(prim))}${esc(rz(', אבל התלונה החוזרת שלך מדברת על ',i))}${esc(names)}. ` +
+            `${esc(rz('שווה לעצור על זה. או שיש כאן שפה שנייה שחסרה לך יותר משחשבת, או שהתלונה כבר מזמן לא על מה שהיא באמת.',i))}</div>`;
+      }
       /* חוגה */
       if(b.type==='dial'){
         const n = val(b.field, b.partner ? 1-i : i); if(!n) return '';
