@@ -18,7 +18,7 @@ const STATION_KEY  = () => 'lovelang.st' + (window.STATION ? STATION.num : '00')
 
 /* שדות שנשמרים לכל האפליקציה ולא לתחנה בודדת.
    השפה שנבחרה בתחנה 01 צריכה להיות זמינה גם ב-02, ב-03 וב-04. */
-const GLOBAL_FIELDS = ['quiz','primary','guess','tank','intensity','deficit','loved','mygive','hurts'];
+const GLOBAL_FIELDS = ['quiz','primary','guess','tank','intensity','deficit','loved','mygive','hurts','actions'];
 
 /* ---------- state ---------- */
 let C = {p:[{name:'',g:'f'},{name:'',g:'m'}]};   // עמודה 0 = היא · עמודה 1 = הוא
@@ -36,6 +36,11 @@ function load(){
   }
   try{ const r = localStorage.getItem(STATION_KEY()); if(r) A = JSON.parse(r); }catch(e){}
   try{ const r = localStorage.getItem(GLOBAL_KEY);  if(r) G = JSON.parse(r); }catch(e){}
+  /* הגירה · actions ישב פעם בתחנה 05 בלבד */
+  if(!G.actions){
+    try{ const old = JSON.parse(localStorage.getItem('lovelang.st05')||'{}');
+      if(old.actions){ G.actions = old.actions; saveGlobal(); } }catch(e){}
+  }
 }
 function saveCouple(){ try{ localStorage.setItem(COUPLE_KEY, JSON.stringify(C)); }catch(e){} }
 function saveAnswers(){ try{ localStorage.setItem(STATION_KEY(), JSON.stringify(A)); }catch(e){} }
@@ -283,21 +288,51 @@ W.quiz = (el) => {
 /* כמה חסר לי · דירוג מוחלט לכל חמש השפות, לא בחירה כפויה.
    השאלון אומר מה חשוב יותר ממה. זה אומר כמה חסר בפועל. */
 W.matrix = (el) => {
-  const f = el.dataset.field, rows = window[el.dataset.options] || [];
+  const f = el.dataset.field, allRows = window[el.dataset.options] || [];
   const opts = window[el.dataset.scale] || [];
+  /* data-only="deficit" מצמצם למה שסומן ״חסר מאוד״ קודם — מדידה חוזרת ממוקדת */
+  const onlyF = el.dataset.only;
   el.className = 'pair';
   el.innerHTML = people(el).map((p,i)=>{
     const cur = list(f,i);
+    const prev = onlyF ? list(onlyF,i) : null;
+    const rows = prev ? allRows.filter((r,k)=> prev[k]==='lots') : allRows;
+    if(onlyF && !rows.length) return `<div><div class="pname">${esc(p.name)||'·'}</div>
+      <p class="tiny">לא סימנת שום שפה כ״חסרה מאוד״ בתחנה 02, אז אין כאן מה למדוד שוב. זה סימן טוב.</p></div>`;
+    const idxOf = r => allRows.indexOf(r);
     return `<div>
       <div class="pname">${esc(p.name)||'·'}</div>
       <table class="mtx"><tbody>
-        ${rows.map((r,k)=>`<tr>
+        ${rows.map((r)=>{ const k = idxOf(r); return `<tr>
           <th>${esc(r.label)}</th>
           ${opts.map(o=>`<td><button type="button" data-act="mtx" data-f="${f}" data-i="${i}" data-k="${k}" data-v="${esc(o.id)}"
             aria-pressed="${cur[k]===o.id}" title="${esc(o.label)}"><span>${esc(o.short)}</span></button></td>`).join('')}
-        </tr>`).join('')}
+        </tr>`; }).join('')}
       </tbody></table>
       <div class="mtxkey">${opts.map(o=>`<span><b>${esc(o.short)}</b> ${esc(o.label)}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+};
+
+/* סימון ביצוע · מה שהובטח מול מה שקרה */
+W.checkoff = (el) => {
+  const src = el.dataset.src, f = el.dataset.field;
+  el.className = 'pair';
+  el.innerHTML = people(el).map((p,i)=>{
+    const items = list(src,i).filter(Boolean);
+    const done  = list(f,i);
+    if(!items.length) return `<div><div class="pname">${esc(p.name)||'·'}</div>
+      <p class="tiny">לא נמצאו פעולות מתחנה 05. אפשר לחזור לשם ולמלא אותן.</p></div>`;
+    return `<div>
+      <div class="pname">${esc(p.name)||'·'}</div>
+      <ul class="chk">${items.map((x,k)=>`<li class="${done[k]==='y'?'yes':(done[k]==='n'?'no':'')}">
+        <span class="txt">${esc(x)}</span>
+        <span class="btns">
+          <button type="button" data-act="chk" data-f="${f}" data-i="${i}" data-k="${k}" data-v="y"
+            aria-pressed="${done[k]==='y'}">קרה</button>
+          <button type="button" data-act="chk" data-f="${f}" data-i="${i}" data-k="${k}" data-v="n"
+            aria-pressed="${done[k]==='n'}">לא</button>
+        </span></li>`).join('')}</ul>
     </div>`;
   }).join('');
 };
@@ -736,6 +771,18 @@ function buildCard(){
           (off ? `<p class="soloq">${esc(rz('[שים/שימי] לב: זו לא השפה העיקרית שלך. לפעמים העיקרית דווקא מקבלת מענה, ומה שמרעיב זה משהו אחר.',i))}</p>` : '') +
           `</div>`;
       }
+      /* כמה מהפעולות באמת קרו */
+      if(b.type==='checkoff'){
+        const items = list(b.src,i).filter(Boolean), done = list(b.field,i);
+        if(!items.length) return '';
+        const yes = items.filter((x,k)=> done[k]==='y').length;
+        const answered = items.filter((x,k)=> done[k]).length;
+        if(!answered) return '';
+        const line = items.map((x,k)=> (done[k]==='y'?'✓ ':(done[k]==='n'?'· ':'')) + x).join('<br>');
+        const cls = yes === items.length ? 'ok' : (yes === 0 ? 'miss' : '');
+        return `<div class="lst chk ${cls}"><strong>${esc(rz(b.label,i))} · ${yes} מתוך ${items.length}</strong>
+          <p class="chkl">${line}</p></div>`;
+      }
       /* מדידה חוזרת · אותו מדד, שתי נקודות בזמן */
       if(b.type==='delta'){
         const then = val(b.from,i), now = val(b.to,i);
@@ -1011,6 +1058,12 @@ document.addEventListener('click', e=>{
   if(d.act==='qreopen'){
     const host = document.querySelector('[data-widget="quiz"][data-field="'+d.f+'"]');
     if(host){ host.dataset.collapsed='0'; A[d.f+'_at']=0; saveAnswers(); W.quiz(host); } return; }
+  if(d.act==='chk'){
+    const a = arr(d.f, +d.i), k = +d.k;
+    a[k] = (a[k] === d.v ? '' : d.v);
+    save(d.f);
+    const host = b.closest('[data-widget="checkoff"]'); if(host) W.checkoff(host);
+    buildCard(); return; }
   if(d.act==='mtx'){
     const a = arr(d.f, +d.i), k = +d.k;
     a[k] = (a[k] === d.v ? '' : d.v);

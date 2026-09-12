@@ -57,7 +57,7 @@ var CARD = {
     field:'primary', guess:'guess', tank:'tank',
   },
   badge: {field:'primary', options:'LANGS'},
-  requires: {pair:['tank','guess','deficit']},
+  requires: {pair:['tank','guess','deficit','heard']},
   blocks: [
     {type:'dial',        label:'הדלי שלי כרגע', field:'tank'},
     {type:'deficit',     label:'ומה שהכי חסר לי עכשיו', field:'deficit', primary:'primary'},
@@ -65,6 +65,7 @@ var CARD = {
     {type:'chips',       label:'התלונה שחוזרת אצלי', field:'complaint'},
     {type:'note',        label:'הבקשה שאני [מבקש/מבקשת] הכי הרבה', field:'request'},
     {type:'bankPartner', bank:'BANK_HURT', key:'primary'},
+    {type:'note',        label:'ומה ששמעתי <ממנו/ממנה> בקול', field:'heard'},
     {type:'note',        label:'מה שלמדתי על עצמי', field:'learnedMe'},
     {type:'notePartner', label:'ומה שהבנתי על',     field:'learnedYou'},
   ],

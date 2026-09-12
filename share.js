@@ -8,7 +8,7 @@
 'use strict';
 
 const KEYS = ['lovelang.couple','lovelang.global','lovelang.progress',
-              'lovelang.st01','lovelang.st02','lovelang.st03','lovelang.st04','lovelang.st05','lovelang.st06'];
+              'lovelang.st01','lovelang.st02','lovelang.st03','lovelang.st04','lovelang.st05','lovelang.st06','lovelang.st07'];
 
 /* ---------- קוד ההעברה ---------- */
 /* base64 של UTF-8. לא הצפנה, רק אריזה שאפשר להעתיק בוואטסאפ. */
