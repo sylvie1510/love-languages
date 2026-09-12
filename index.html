@@ -123,47 +123,48 @@
   <div class="rv">
     <div class="eyebrow">המפה · שבע תחנות</div>
     <p class="tiny" style="margin-bottom:1.25rem">חמש תחנות בערך שעה ורבע, ועוד שתיים שמחכות לשבועות שאחרי. לא חייבים ברצף — הכול נשמר.</p>
+    <div class="journey" id="journey"></div>
     <div class="starthere">תתחילו כאן <span aria-hidden="true">↓</span></div>
     <div class="stations">
       <a class="station" href="station-01.html" data-num="01">
         <span class="st"></span>
-        <div class="n">01 · כ-17 דקות</div>
+        <div class="n"><b>01</b><span class="tt">כ-17 דקות</span></div>
         <div class="t">השפה שלי</div>
         <div class="d">שאלון של 20 בחירות, שאלת ההכרעה, עוצמת הצורך, וכמה מלא הדלי שלכם עכשיו.</div>
       </a>
       <a class="station" href="station-02.html" data-num="02">
         <span class="st"></span>
-        <div class="n">02 · כ-14 דקות</div>
+        <div class="n"><b>02</b><span class="tt">כ-14 דקות</span></div>
         <div class="t">הצינורות</div>
         <div class="d">כמה מגיע אליכם בפועל, באיזו שפה אתם נותנים, והפער שנפתח בין השניים.</div>
       </a>
       <a class="station" href="station-03.html" data-num="03">
         <span class="st"></span>
-        <div class="n">03 · כ-20 דקות</div>
+        <div class="n"><b>03</b><span class="tt">כ-20 דקות</span></div>
         <div class="t">השפה שלך</div>
         <div class="d">להפוך כותרת להוראות. רשימה ספציפית של מה באמת ממלא, ואז להחליף ולקרוא.</div>
       </a>
       <a class="station" href="station-04.html" data-num="04">
         <span class="st"></span>
-        <div class="n">04 · כ-10 דקות</div>
+        <div class="n"><b>04</b><span class="tt">כ-10 דקות</span></div>
         <div class="t">המבטא הזר</div>
         <div class="d">״זה מאולץ״, ״זה לא טבעי לי״, ״אם צריך לבקש אז זה לא נחשב״. ההתנגדות, והתשובה לה.</div>
       </a>
       <a class="station" href="station-05.html" data-num="05">
         <span class="st"></span>
-        <div class="n">05 · כ-15 דקות</div>
+        <div class="n"><b>05</b><span class="tt">כ-15 דקות</span></div>
         <div class="t">להתנהג אהבה</div>
         <div class="d">כמה אני מתאמץ מול כמה השני מרגיש, שלוש פעולות בשבוע, ותזכורת שחוזרת.</div>
       </a>
       <a class="station" href="station-06.html" data-num="06">
         <span class="st"></span>
-        <div class="n">06 · אחרי שבוע</div>
+        <div class="n"><b>06</b><span class="tt">אחרי שבוע</span></div>
         <div class="t">כשרק אחד זז</div>
         <div class="d">הצ׳ק-אין השבועי. מה התחייבתם, מה קרה, ומה עושים כשאחד עשה והשני לא.</div>
       </a>
       <a class="station" href="station-07.html" data-num="07">
         <span class="st"></span>
-        <div class="n">07 · אחרי כמה שבועות</div>
+        <div class="n"><b>07</b><span class="tt">אחרי כמה שבועות</span></div>
         <div class="t">כשזה לא מתמלא</div>
         <div class="d">האבחון. שלוש הסיבות שדלי לא מתמלא גם כששפת האהבה נכונה.</div>
       </a>
@@ -172,17 +173,21 @@
   </div>
 </section>
 
-<section class="wrap wide">
+<section class="wrap wide" id="fridgesec">
   <div class="rv">
     <div class="eyebrow">מקרר</div>
     <h2>המילון שלנו</h2>
     <p class="tiny" style="margin-bottom:.5rem">
       נבנה מעצמו ככל שתעברו את התחנות. עמוד אחד, להדפסה ולמקרר.
     </p>
-    <div class="card" id="map"></div>
+    <div class="fridge">
+      <span class="magnet m1" aria-hidden="true"></span>
+      <span class="magnet m2" aria-hidden="true"></span>
+      <div class="card" id="map"></div>
+    </div>
     <div class="btnrow">
       <a class="btn solid" href="station-01.html">להתחיל מהתחנה הראשונה</a>
-      <button class="btn" onclick="window.print()">להדפיס את המילון</button>
+      <button class="btn print" type="button" onclick="window.print()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>להדפיס ולתלות על המקרר</button>
     </div>
   </div>
 </section>
@@ -195,5 +200,6 @@
 <script src="share.js?v=1"></script>
 <script src="map.js?v=1"></script>
 <script src="engine.js?v=1"></script>
+<script src="ui.js?v=1"></script>
 </body>
 </html>

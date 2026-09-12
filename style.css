@@ -1,14 +1,41 @@
 :root{
-  --paper:#EFE9E3;
-  --sheet:#FBF8F5;
-  --ink:#231D1B;
-  --ink-soft:#463D39;
-  --ink-faint:#2B2421;
-  --ink-mute:#9A8F89;
-  --rule:#DED4CB;
-  --crimson:#840200;
+  /* ---- אווירה · חול חם, שיבולת שועל, שמנת ---- */
+  --paper:#F1EAE1;        /* warm sand · הרקע */
+  --sheet:#FBF6EF;        /* שמנת טבעית · משטחים */
+  --oat:#E9E0D4;          /* oatmeal · עומק שקט */
+  --paper-deep:#E7DED2;   /* לשכבות נמוכות יותר */
+
+  /* ---- דיו ---- */
+  --ink:#2A2320;
+  --ink-soft:#574C45;
+  --ink-faint:#6E625A;
+  --ink-mute:#A5978B;
+  --rule:#E0D5C7;
+  --rule-soft:#EBE2D6;
+
+  /* ---- מותג ומבטאים ---- */
+  --crimson:#840200;      /* צבע המותג · להדגשות בלבד */
   --crimson-soft:#B6564E;
+  --terra:#B2705A;        /* טרקוטה שקטה · אינטראקציה רכה */
+  --terra-soft:#D8B7A6;
+  --terra-wash:#F3E6DD;
+  --slate:#75817E;        /* סלייט רך · רוגע */
+  --slate-wash:#E8EDEB;
+
+  /* ---- עומק ורכות ---- */
+  --r-xs:6px;
+  --r-sm:10px;
+  --r-md:16px;
+  --r-lg:22px;
+  --r-xl:28px;
+  --shadow-xs:0 1px 2px rgba(74,56,44,.04), 0 2px 6px rgba(74,56,44,.03);
+  --shadow-sm:0 2px 6px rgba(74,56,44,.05), 0 8px 20px rgba(74,56,44,.045);
+  --shadow-md:0 4px 12px rgba(74,56,44,.06), 0 16px 38px rgba(74,56,44,.06);
+  --shadow-lg:0 8px 24px rgba(74,56,44,.07), 0 28px 64px rgba(74,56,44,.08);
+  --shadow-in:inset 0 1px 2px rgba(74,56,44,.05);
+
   --measure:34rem;
+  --ease:cubic-bezier(.22,.61,.36,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -17,7 +44,10 @@ body{
   font-weight:300;
   background:var(--paper);
   color:var(--ink);
-  line-height:1.75;
+  line-height:1.85;
+  letter-spacing:.004em;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
   font-size:clamp(16.5px,1.05rem + .2vw,19px);
   overflow-x:hidden;
 }
@@ -333,8 +363,9 @@ hr.rule{border:0;border-top:1px solid var(--rule);margin-block:2.5rem}
 @media print{
   body{background:#fff}
   body::before,#rail{display:none}
-  section:not(#cardsec){display:none}
-  #cardsec{background:#fff;color:#000;padding:0}
+  /* בתחנה מדפיסים את הכרטיס. בעמוד הבית את המילון למקרר. */
+  section:not(#cardsec):not(#fridgesec){display:none}
+  #cardsec,#fridgesec{background:#fff;color:#000;padding:0}
   #cardsec h2,#cardsec .eyebrow,.btnrow{display:none}
   .card{border:1px solid #000}
 }
@@ -753,3 +784,409 @@ a.station.done .t::after{content:" ✓";color:var(--crimson);font-size:.7em;vert
 .modepick{margin-bottom:0;padding-bottom:1.4rem}
 /* שלוש הבטחות בשתי עמודות · האחרונה תופסת שורה שלמה */
 @media(min-width:560px){ .promises > div:last-child:nth-child(odd){grid-column:1/-1} }
+
+/* ============================================================
+   שכבת הרכות · מטבלאות של קווי שיער לכרטיסים שנושמים
+   ============================================================ */
+
+/* ---------- משטחים שהיו רשת של 1px ---------- */
+.langs,.sides,.vs,.promises,.lgrid,.gaps,.cross,.objections{
+  background:transparent;border:0;gap:.7rem;
+}
+.lang,.side,.vs > div,.promises > div,.lp,.gp,.cr,.obj{
+  background:var(--sheet);
+  border:1px solid var(--rule-soft);
+  border-radius:var(--r-md);
+  box-shadow:var(--shadow-xs);
+}
+.lang,.side,.vs > div,.obj{padding:1.35rem 1.4rem}
+.promises > div{padding:1.2rem 1.3rem}
+.lp,.gp{padding:1.25rem 1.3rem}
+.cr{padding:1.15rem 1.25rem}
+
+/* הרשת של שני בני הזוג ---------- */
+@media(min-width:700px){
+  .pair{grid-template-columns:1fr 1fr;gap:1.1rem;background:transparent}
+  .pair > div{
+    background:var(--sheet);
+    border:1px solid var(--rule-soft);
+    border-radius:var(--r-md);
+    box-shadow:var(--shadow-xs);
+    padding:1.25rem 1.3rem;
+  }
+  .pair > div:first-child,.pair > div:last-child{padding-inline:1.3rem}
+}
+@media(max-width:699px){
+  .pair > div{
+    background:var(--sheet);border:1px solid var(--rule-soft);
+    border-radius:var(--r-md);padding:1.2rem 1.25rem;box-shadow:var(--shadow-xs);
+  }
+}
+#names.pair .modepick{background:transparent;border:0;box-shadow:none;padding:0}
+
+.pname{
+  border-bottom:0;padding-bottom:0;margin-bottom:1rem;
+  font-size:.78rem;letter-spacing:.16em;color:var(--terra);
+  text-transform:none;
+}
+
+/* ---------- כרטיס השאלה ---------- */
+.q{
+  background:var(--sheet);
+  border:1px solid var(--rule-soft);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-sm);
+  padding:clamp(1.4rem,4.5vw,2.2rem);
+}
+.q .pair > div{background:var(--paper);border-color:var(--rule)}
+
+/* ---------- כפתורי בחירה ---------- */
+.opt{
+  border:1px solid var(--rule);
+  border-radius:var(--r-sm);
+  background:var(--sheet);
+  transition:border-color .2s var(--ease),background .2s var(--ease),
+             box-shadow .2s var(--ease),transform .16s var(--ease);
+}
+.opt:hover{border-color:var(--terra-soft);background:#fff;box-shadow:var(--shadow-xs)}
+.opt:active{transform:scale(.995)}
+.opt[aria-pressed="true"]{
+  background:var(--terra-wash);border-color:var(--terra);color:var(--ink);
+  box-shadow:inset 3px 0 0 var(--terra);
+}
+.opt[aria-pressed="true"] small{color:var(--ink-soft)}
+.opts{gap:.5rem}
+
+/* ---------- צ׳יפים ---------- */
+.chip{
+  border-radius:999px;border-color:var(--rule);background:var(--sheet);
+  transition:all .2s var(--ease);
+}
+.chip:hover{border-color:var(--terra-soft);background:#fff;box-shadow:var(--shadow-xs)}
+.chip[aria-pressed="true"]{background:var(--terra);border-color:var(--terra);color:#fff}
+
+/* ---------- שדות ---------- */
+input[type="text"],textarea{
+  border:1px solid var(--rule);
+  border-radius:var(--r-sm);
+  background:var(--paper);
+  padding:.7rem .85rem;
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease);
+}
+input[type="text"]:focus,textarea:focus{
+  outline:none;border-color:var(--terra);background:#fff;
+  box-shadow:0 0 0 3px var(--terra-wash);
+}
+.lb input{border:0;border-bottom:1px solid var(--rule);border-radius:0;background:transparent;padding:.35rem .1rem}
+.lb input:focus{border-bottom-color:var(--terra);box-shadow:none;background:transparent}
+.lb li{border-bottom:0;padding-bottom:.2rem}
+
+/* ---------- חוגות ומטריצות ---------- */
+.dial{gap:.3rem}
+.dial button{border-radius:var(--r-xs);background:var(--sheet);transition:all .18s var(--ease)}
+.dial button:hover{border-color:var(--terra-soft);background:#fff}
+.dial button[aria-pressed="true"]{background:var(--terra);border-color:var(--terra);box-shadow:var(--shadow-xs)}
+.mtx td{padding:3px}
+.mtx button{border-radius:var(--r-xs);background:var(--sheet)}
+.mtx button:hover{border-color:var(--terra-soft);background:#fff}
+.mtx button[aria-pressed="true"]{background:var(--slate);border-color:var(--slate)}
+.mtx button[data-v="lots"][aria-pressed="true"]{background:var(--terra);border-color:var(--terra)}
+.chk .btns button{border-radius:var(--r-xs)}
+.chk .btns button[data-v="y"][aria-pressed="true"]{background:var(--slate);border-color:var(--slate)}
+.chk .btns button[data-v="n"][aria-pressed="true"]{background:var(--terra);border-color:var(--terra)}
+.chk li{border-bottom-color:var(--rule-soft)}
+
+/* ---------- כפתורים ---------- */
+.btn,.cbtn{
+  border-radius:999px;border-color:var(--rule);background:var(--sheet);
+  transition:all .2s var(--ease);
+}
+.btn:hover,.cbtn:hover{border-color:var(--terra);background:#fff;box-shadow:var(--shadow-xs);color:var(--ink)}
+.btn.solid{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+.btn.solid:hover{background:var(--terra);border-color:var(--terra);color:#fff}
+.qnav .cbtn.solid{border-radius:999px}
+.qnav .cbtn.solid:hover{background:var(--terra);border-color:var(--terra)}
+
+/* ---------- השאלון ---------- */
+.quizstep{
+  background:var(--sheet);border:1px solid var(--rule-soft);
+  border-radius:var(--r-lg);box-shadow:var(--shadow-sm);
+  padding:clamp(1.25rem,4vw,1.8rem);
+}
+.quizstep .two{gap:.55rem}
+.qhead{border-bottom-color:var(--rule-soft)}
+.qn{color:var(--terra)}
+.qdot i{border-radius:50%}
+.qdot.now i{background:var(--terra)}
+.qdot.full i{background:var(--terra-soft)}
+.qnav{border-top-color:var(--rule-soft)}
+.quizdone{border-radius:var(--r-lg);border-color:var(--rule)}
+
+/* ---------- הכרטיס האישי ---------- */
+.card{
+  border-radius:var(--r-xl);
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--rule-soft);
+}
+.person{border-radius:var(--r-md)}
+.person .do,.person .lst.do{border-radius:var(--r-sm);border-color:var(--terra-soft);background:var(--terra-wash)}
+.person .lst.do strong{color:var(--terra)}
+.agreement{border-radius:var(--r-md)}
+.vis{border-radius:var(--r-md)}
+.vis.empty{border-radius:var(--r-md);border-color:var(--rule)}
+.bars .br{border-radius:999px}
+.bars .br i{border-radius:999px;background:var(--slate)}
+.bars li.top .br i{background:var(--terra)}
+.bars li.top .lb,.bars li.top .nn{color:var(--terra)}
+.gb i{border-radius:999px}
+.gb.f i{background:var(--terra)}
+.gb.e i{background:var(--slate)}
+.combo.miss b{color:var(--terra)}
+
+/* ---------- ציטוט ---------- */
+.pull{border-inline-start-color:var(--terra)}
+.pull.red{color:var(--crimson)}
+.voices{border-inline-start-color:var(--terra-soft)}
+.voices p{color:var(--terra)}
+.aloud{border-color:var(--terra);border-radius:var(--r-md);box-shadow:var(--shadow-xs)}
+.aloud .eyebrow{color:var(--terra)}
+.eyebrow{color:var(--terra)}
+.lang u{color:var(--terra)}
+.lp .hd span{color:var(--terra)}
+.mir li{border-inline-start-color:var(--terra-soft)}
+
+/* ---------- מד ההתקדמות העליון ---------- */
+#rail i{background:var(--terra)}
+#chapbar{background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(10px)}
+#chapbar .seg.now i,#chapbar .seg.done i{background:var(--terra)}
+#gatehint{border-color:var(--terra);border-radius:var(--r-sm);background:var(--terra-wash)}
+
+/* ============================================================
+   נגן ההנחיה הקולית
+   ============================================================ */
+.voicedrop{
+  display:none;align-items:center;gap:1rem;
+  margin-top:1.9rem;padding:.9rem 1rem .9rem .9rem;
+  background:var(--sheet);border:1px solid var(--rule-soft);
+  border-radius:999px;box-shadow:var(--shadow-sm);max-width:27rem;
+}
+.voicedrop.ready{display:flex}
+.vd-play{
+  flex:0 0 auto;width:3rem;height:3rem;border-radius:50%;cursor:pointer;
+  border:1px solid var(--terra-soft);background:var(--terra-wash);
+  display:grid;place-items:center;padding:0;
+  transition:all .22s var(--ease);position:relative;
+}
+.vd-play:hover{background:var(--terra);border-color:var(--terra);box-shadow:var(--shadow-sm)}
+.vd-play:hover .vd-ico{fill:#fff}
+.vd-ico{width:1.15rem;height:1.15rem;fill:var(--terra);transition:fill .22s var(--ease)}
+.vd-s{display:none}
+.voicedrop.playing .vd-p{display:none}
+.voicedrop.playing .vd-s{display:block}
+.voicedrop.playing .vd-play{background:var(--terra);border-color:var(--terra)}
+.voicedrop.playing .vd-play .vd-ico{fill:#fff}
+.voicedrop.playing .vd-play::after{
+  content:"";position:absolute;inset:-5px;border-radius:50%;
+  border:1px solid var(--terra-soft);animation:vdpulse 2.4s var(--ease) infinite;
+}
+@keyframes vdpulse{0%{opacity:.7;transform:scale(1)}100%{opacity:0;transform:scale(1.28)}}
+.vd-body{flex:1;min-width:0}
+.vd-label{font-size:.78rem;line-height:1.45;color:var(--ink-faint);margin-bottom:.5rem}
+.vd-track{height:4px;background:var(--oat);border-radius:999px;cursor:pointer;overflow:hidden}
+.vd-track i{display:block;height:100%;width:0;background:var(--terra);border-radius:999px;transition:width .2s linear}
+@media print{.voicedrop{display:none!important}}
+
+/* ============================================================
+   רגע הנשימה
+   ============================================================ */
+.breathe{
+  display:grid;gap:1.5rem;align-items:center;
+  background:linear-gradient(180deg,var(--sheet),var(--terra-wash));
+  border:1.5px dashed var(--terra-soft);border-radius:var(--r-xl);
+  padding:clamp(1.6rem,5vw,2.4rem);margin-block:1rem 2.5rem;
+  box-shadow:var(--shadow-sm);
+}
+@media(min-width:620px){.breathe{grid-template-columns:auto 1fr;gap:2rem}}
+.br-ring{
+  width:7.5rem;height:7.5rem;border-radius:50%;justify-self:center;
+  display:grid;place-items:center;
+  border:1px solid var(--terra-soft);
+  animation:breathe 11s ease-in-out infinite;
+}
+.br-core{
+  display:block;width:3.4rem;height:3.4rem;border-radius:50%;
+  background:radial-gradient(circle at 50% 45%,var(--terra-soft),var(--terra));
+  opacity:.62;animation:breathecore 11s ease-in-out infinite;
+}
+@keyframes breathe{
+  0%,100%{transform:scale(.82);box-shadow:0 0 0 0 rgba(178,112,90,.14)}
+  45%    {transform:scale(1.06);box-shadow:0 0 0 22px rgba(178,112,90,0)}
+  55%    {transform:scale(1.06)}
+}
+@keyframes breathecore{0%,100%{transform:scale(.86);opacity:.5}45%,55%{transform:scale(1.1);opacity:.78}}
+@media (prefers-reduced-motion:reduce){
+  .br-ring,.br-core{animation:none}
+  .br-ring{transform:scale(1)}
+}
+.br-copy h3{margin-bottom:.7rem}
+.br-copy p{margin-bottom:.55rem}
+.br-copy p:last-child{margin-bottom:0}
+@media print{.breathe{display:none}}
+
+/* ============================================================
+   דלי האהבה
+   ============================================================ */
+.buckets{display:flex;flex-wrap:wrap;gap:1.6rem;justify-content:center;margin-top:1.8rem}
+.bucket{text-align:center}
+.bucket svg{width:4.6rem;height:auto;display:block;margin-inline:auto;overflow:visible}
+.bk-out{fill:none;stroke:var(--terra-soft);stroke-width:3;stroke-linejoin:round}
+.bk-fill{fill:var(--terra);opacity:.85;transition:y .7s var(--ease)}
+.bucket:not(.on) .bk-fill{fill:var(--oat)}
+.bucket figcaption{
+  margin-top:.6rem;font-size:.8rem;font-weight:900;color:var(--ink);line-height:1.4;
+}
+.bucket figcaption span{
+  display:block;font-weight:300;font-size:.72rem;letter-spacing:.1em;color:var(--ink-mute);margin-top:.15rem;
+}
+
+/* ============================================================
+   תזכורת ליומן
+   ============================================================ */
+.btn.nudge{
+  display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;
+  background:var(--slate-wash);border-color:var(--slate);color:var(--ink);
+}
+.btn.nudge:hover{background:var(--slate);border-color:var(--slate);color:#fff}
+.btn.nudge svg{
+  width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;
+  stroke-width:1.6;stroke-linecap:round;flex:0 0 auto;
+}
+@media print{.btn.nudge{display:none}}
+
+/* ============================================================
+   מד המסע · איפה הזוג נמצא
+   ============================================================ */
+.journey{
+  background:var(--sheet);border:1px solid var(--rule-soft);
+  border-radius:var(--r-lg);box-shadow:var(--shadow-xs);
+  padding:1.15rem 1.3rem;margin-bottom:1.5rem;
+}
+.jr-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:1rem}
+.jr-title{font-weight:900;font-size:.98rem;color:var(--ink)}
+.jr-count{font-size:.72rem;letter-spacing:.14em;font-weight:900;color:var(--terra);white-space:nowrap}
+.jr-dots{display:flex;align-items:center;gap:.35rem;list-style:none;flex-wrap:wrap}
+.jr-dots li{display:flex;align-items:center;gap:.35rem;flex:1;min-width:2.2rem}
+.jr-dots li i{
+  flex:1;height:4px;border-radius:999px;background:var(--oat);
+  transition:background .5s var(--ease);
+}
+.jr-dots li.done i{background:var(--terra)}
+.jr-dots li span{font-size:.66rem;font-weight:900;color:var(--ink-mute);letter-spacing:.06em}
+.jr-dots li.done span{color:var(--terra)}
+.jr-note{margin:.9rem 0 0;font-size:.85rem;color:var(--ink-soft)}
+
+/* ============================================================
+   כרטיסי התחנות
+   ============================================================ */
+.stations{background:transparent;border:0;gap:.75rem}
+.station{
+  background:var(--sheet);border:1px solid var(--rule-soft);
+  border-radius:var(--r-md);box-shadow:var(--shadow-xs);
+  padding:1.3rem 1.35rem;position:relative;overflow:hidden;
+  transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s var(--ease);
+}
+.station::before{
+  content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;
+  background:var(--terra);transform:scaleY(0);transform-origin:top;
+  transition:transform .32s var(--ease);
+}
+.station:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--terra-soft)}
+.station:hover::before{transform:scaleY(1)}
+.station .n{
+  display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;
+  font-size:.72rem;letter-spacing:.16em;color:var(--ink-mute);margin-bottom:.45rem;font-weight:900;
+}
+.station .n b{color:var(--terra);font-size:.82rem}
+.station .n .tt{
+  font-weight:300;letter-spacing:.06em;background:var(--oat);
+  color:var(--ink-faint);padding:.15rem .55rem;border-radius:999px;font-size:.68rem;
+}
+.station .t{font-weight:900;font-size:1.22rem;line-height:1.25;margin-bottom:.45rem;color:var(--ink)}
+.station .d{font-size:.93rem;line-height:1.6;color:var(--ink-soft)}
+.station .st{
+  position:absolute;inset-block-start:1.3rem;inset-inline-end:1.35rem;
+  font-size:.66rem;letter-spacing:.12em;font-weight:900;color:var(--terra);
+}
+.station.done{border-color:var(--terra-soft);background:linear-gradient(180deg,var(--terra-wash),var(--sheet))}
+.station.done::before{transform:scaleY(1);background:var(--terra-soft)}
+@media (prefers-reduced-motion:reduce){.station:hover{transform:none}}
+
+/* ============================================================
+   המילון · מוקאפ פיזי לתלייה
+   ============================================================ */
+.fridge{
+  position:relative;padding:1.6rem .9rem .9rem;
+  background:
+    linear-gradient(180deg,var(--paper-deep),var(--oat));
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-in);
+  margin-top:1.2rem;
+}
+.fridge .card{
+  transform:rotate(-.35deg);
+  box-shadow:var(--shadow-md);
+  border-radius:var(--r-sm);
+}
+.magnet{
+  position:absolute;top:.55rem;width:1.1rem;height:1.1rem;border-radius:50%;
+  box-shadow:0 2px 4px rgba(74,56,44,.22);z-index:2;
+}
+.magnet.m1{inset-inline-start:2.2rem;background:radial-gradient(circle at 35% 30%,var(--terra-soft),var(--terra))}
+.magnet.m2{inset-inline-end:2.2rem;background:radial-gradient(circle at 35% 30%,#9FAFAB,var(--slate))}
+.btn.print{display:inline-flex;align-items:center;gap:.5rem}
+.btn.print svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
+
+/* ============================================================
+   הדפסה · דף נקי למקרר
+   ============================================================ */
+@media print{
+  @page{margin:14mm}
+  /* קריטי · אנימציית ההיחשפות מתחילה ב-opacity:0. בלי זה, כל מה
+     שהמשתמש עוד לא גלל אליו יוצא דף לבן בהדפסה. */
+  .rv{opacity:1!important;transform:none!important;transition:none!important}
+  #gate.locked{opacity:1!important;pointer-events:auto!important}
+  html,body{background:#fff!important}
+  body{padding-block:0;font-size:11pt;line-height:1.55}
+  #rail,#chapbar,.scroll-hint,.btnrow,.stationnav,.journey,.starthere,
+  .stations,.illu,.voicedrop,.breathe,.buckets,#gatehint,#solonote,
+  #cover .sub,.modepick,.magnet{display:none!important}
+  section{padding-block:0!important;break-inside:avoid}
+  .wrap,.wide{max-width:100%!important;padding-inline:0!important}
+  .fridge{background:none!important;box-shadow:none!important;padding:0!important}
+  .fridge .card{transform:none!important;box-shadow:none!important;border:1px solid #ccc!important}
+  .card{padding:0!important;background:#fff!important;border:0!important;box-shadow:none!important}
+  .card .cardhead{border-bottom:1.5px solid #333!important;padding-bottom:.5rem;margin-bottom:1rem}
+  .person,.agreement,.vis{break-inside:avoid;box-shadow:none!important}
+  .person{border:1px solid #ddd!important;border-radius:4px!important;padding:.8rem!important;margin-bottom:.7rem!important}
+  a[href]::after{content:""!important}
+}
+
+/* החץ בכרטיס התחנה · טרקוטה במקום אדום קשה */
+a.station::after{color:var(--terra)}
+a.station:focus-visible{outline-color:var(--terra)}
+
+/* בתוך כרטיס השאלה · טור האדם הוא חלוקה, לא כרטיס נוסף */
+.q .pair > div{
+  background:transparent;border:0;box-shadow:none;
+  padding:0;
+}
+@media(min-width:700px){
+  .q .pair{gap:2.2rem;position:relative}
+  .q .pair > div:first-child{
+    padding-inline-end:2.2rem;
+    border-inline-end:1px solid var(--rule-soft);
+  }
+  .q .pair > div{padding:0}
+}
+.q .pair input[type="text"],.q .pair textarea{background:var(--paper)}
+.q .pair input[type="text"]:focus,.q .pair textarea:focus{background:#fff}
