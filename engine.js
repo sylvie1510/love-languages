@@ -976,7 +976,26 @@ function renderWidgets(){
 }
 function updateGate(){
   const g = document.getElementById('gate'); if(!g) return;
-  g.classList.toggle('locked', !(C.p[0].name.trim() && C.p[1].name.trim()));
+  const a = C.p[0].name.trim(), b = C.p[1].name.trim();
+  const open = !!(a && b);
+  g.classList.toggle('locked', !open);
+
+  /* נעילה בלי הסבר נראית כמו תקלה. אומרים מה חסר ולמה. */
+  const host = document.getElementById('names');
+  if(!host) return;
+  let note = document.getElementById('gatehint');
+  if(open){ if(note) note.remove(); return; }
+  if(!note){
+    note = document.createElement('p');
+    note.id = 'gatehint';
+    host.insertAdjacentElement('afterend', note);
+  }
+  const missing = !a && !b ? 'שני השמות' : (!a ? 'השם הראשון' : 'השם השני');
+  note.innerHTML = C.solo
+    ? 'שאר התחנה תיפתח אחרי ש' + esc(missing) + ' ' + (missing==='שני השמות'?'יתמלאו':'יתמלא') + '. ' +
+      'גם במילוי לבד צריך את שני השמות, כי הטקסטים לאורך כל הדרך פונים אליכם בשם ובלשון הנכונה.'
+    : 'שאר התחנה תיפתח אחרי ש' + esc(missing) + ' ' + (missing==='שני השמות'?'יתמלאו':'יתמלא') + '. ' +
+      'זה מה שמאפשר לכל שאלה לפנות לכל אחד מכם בלשון שלו.';
 }
 function renderAll(){ renderWidgets(); buildCard(); updateGate(); }
 

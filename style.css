@@ -736,3 +736,12 @@ a.station.done .t::after{content:" ✓";color:var(--crimson);font-size:.7em;vert
   .illu img{mix-blend-mode:normal}
   .illu{break-inside:avoid}
 }
+
+/* ---------- למה התחנה נעולה ---------- */
+#gatehint{
+  margin-top:1.1rem;padding:.9rem 1.1rem;
+  background:var(--sheet);border:1px solid var(--crimson);border-inline-start-width:4px;
+  font-size:.9rem;line-height:1.6;color:var(--ink);font-weight:900;
+}
+/* הנעילה עצמה · פחות דהויה, כדי שייראה מכוון ולא שבור */
+.locked{opacity:.45;pointer-events:none;transition:opacity .4s}
