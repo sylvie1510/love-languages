@@ -6,7 +6,7 @@
    <זכר/נקבה>   לפי המין של בן/בת הזוג
    ============================================================ */
 
-var STATION = { num:'02', he:'מה שלא שאלנו' };
+var STATION = { num:'02', he:'הצינורות' };
 
 var VARS = {};
 
@@ -35,7 +35,7 @@ var CHIPS_GIVE = [
 /* התלונה נאמרת אל בן או בת הזוג · לכן סימן < > */
 var CHIPS_COMPLAINT = [
   '״<אתה/את> אף פעם לא <עוזר/עוזרת> לי״','״אנחנו כבר לא מבלים יחד״',
-  '״<אתה/את> תמיד בטלפון״','״אף פעם לא <אומר/אומרת> לי כלום״',
+  '״<אתה/את> תמיד בטלפון״','״לא <אומר/אומרת> לי מילים יפות״',
   '״<לא נוגע/לא נוגעת> בי בכלל״','״שוב שכחת״','״אני [עושה/עושה] הכול לבד״',
   '״לא אכפת לך ממני״',
 ];
@@ -51,21 +51,21 @@ var BANK_HURT = {
 
 /* ---------- הכרטיס ---------- */
 var CARD = {
-  title: 'תחנה 02 · מה שלא שאלנו',
+  title: 'תחנה 02 · הצינורות',
   visual: {
-    kind:'mirror', title:'מה הנחנו אחד על השנייה',
-    field:'primary', guess:'guess', tank:'tank',
+    kind:'cross', title:'הצינורות שלכם',
+    give:'mygive', need:'primary', field:'mygive',
   },
   badge: {field:'primary', options:'LANGS'},
-  requires: {pair:['tank','guess','deficit','heard']},
+  requires: {pair:['deficit','mygive']},
   blocks: [
-    {type:'dial',        label:'הדלי שלי כרגע', field:'tank'},
-    {type:'deficit',     label:'ומה שהכי חסר לי עכשיו', field:'deficit', primary:'primary'},
+    {type:'deficit',     label:'מה שהכי חסר לי עכשיו', field:'deficit', primary:'primary'},
+    {type:'langMine',    label:'ובאיזו שפה אני [אוהב/אוהבת]', field:'mygive'},
+    {type:'langPartner', label:'ומה ש{שני} <צריך/צריכה>', field:'primary'},
     {type:'chips',       label:'מה אני [נותן/נותנת] הכי הרבה', field:'give'},
     {type:'chips',       label:'התלונה שחוזרת אצלי', field:'complaint'},
     {type:'note',        label:'הבקשה שאני [מבקש/מבקשת] הכי הרבה', field:'request'},
     {type:'bankPartner', bank:'BANK_HURT', key:'primary'},
-    {type:'note',        label:'ומה ששמעתי <ממנו/ממנה> בקול', field:'heard'},
     {type:'note',        label:'מה שלמדתי על עצמי', field:'learnedMe'},
     {type:'notePartner', label:'ומה שהבנתי על',     field:'learnedYou'},
   ],

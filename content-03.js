@@ -71,16 +71,11 @@ var EX = {
 /* ---------- הכרטיס ---------- */
 var CARD = {
   title: 'תחנה 03 · השפה שלך',
-  visual: {
-    kind:'cross', title:'הצינורות שלכם',
-    give:'mygive', need:'primary', field:'mygive',
-  },
   badge: {field:'primary', options:'LANGS'},
-  requires: {pair:['loved','mygive']},
+  requires: {pair:['loved']},
   blocks: [
     {type:'langMine',    label:'מה ממלא אותי',  field:'primary'},
     {type:'list',        label:'ובמילים שלי',   field:'loved'},
-    {type:'langMine',    label:'ובאיזו שפה אני [אוהב/אוהבת]', field:'mygive'},
     {type:'langPartner', label:'{שני} <צריך/צריכה>', field:'primary'},
     {type:'listPartner', label:'וזאת הרשימה שלך. במילים <שלו/שלה>', field:'loved'},
     {type:'note',        label:'מה שהפתיע אותי ברשימה <שלו/שלה>', field:'surprise'},

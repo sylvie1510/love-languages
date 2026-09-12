@@ -143,13 +143,14 @@ var CARD = {
   title: 'תחנה 01 · השפה שלי',
   visual: {
     kind:'langs', title:'מפת השפות שלכם',
-    field:'primary', quiz:'quiz', intensity:'intensity',
+    field:'primary', quiz:'quiz', intensity:'intensity', tank:'tank',
   },
   badge: {field:'primary', options:'LANGS'},
-  requires: {pair:['primary','intensity']},
+  requires: {pair:['primary','intensity','tank']},
   blocks: [
     {type:'langMine',    label:'השפה העיקרית שלי', field:'primary'},
     {type:'dial',        label:'עוצמת הצורך', field:'intensity'},
+    {type:'dial',        label:'הדלי שלי כרגע', field:'tank'},
     {type:'bank',        bank:'BANK_A',    key:'primary'},
     {type:'bank',        bank:'BANK_HURT', key:'primary'},
     {type:'langPartner', label:'ומה ש{שני} <צריך/צריכה> ממך', field:'primary'},

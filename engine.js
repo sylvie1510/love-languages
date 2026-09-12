@@ -18,7 +18,7 @@ const STATION_KEY  = () => 'lovelang.st' + (window.STATION ? STATION.num : '00')
 
 /* שדות שנשמרים לכל האפליקציה ולא לתחנה בודדת.
    השפה שנבחרה בתחנה 01 צריכה להיות זמינה גם ב-02, ב-03 וב-04. */
-const GLOBAL_FIELDS = ['quiz','primary','guess','tank','intensity','deficit','loved','mygive','hurts','actions'];
+const GLOBAL_FIELDS = ['quiz','primary','tank','intensity','deficit','loved','mygive','hurts','actions'];
 
 /* ---------- state ---------- */
 let C = {p:[{name:'',g:'f'},{name:'',g:'m'}]};   // עמודה 0 = היא · עמודה 1 = הוא
@@ -525,11 +525,12 @@ function visLangs(v){
     const bars = any ? `<ul class="bars">${r.map(x=>`<li class="${x.id===prim?'top':''}${tied.indexOf(x.id)>-1?' tied':''}">
         <span class="lb">${esc(x.label)}</span>
         <span class="br"><i style="width:${Math.round((x.n/max)*100)}%"></i></span></li>`).join('')}</ul>` : '';
-    const inten = val(v.intensity,i);
+    const inten = val(v.intensity,i), tnk = val(v.tank,i);
     return `<div class="lp">
       <div class="hd"><b>${esc(p.name)||'·'}</b><span>${esc(langName(prim))}</span></div>
       ${bars}
       ${inten?`<p class="tk">עוצמת הצורך · <b>${esc(inten)}</b> מתוך 10</p>`:''}
+      ${tnk?`<p class="tk">${esc(rz('והדלי [שלו/שלה] כרגע',i))} · <b>${esc(tnk)}</b> מתוך 10</p>`:''}
     </div>`;
   }).join('');
 
@@ -566,11 +567,20 @@ function visLangs(v){
       `שווה לבדוק אם באמת כך, או שזו הרגלה. לפעמים מי שלא קיבל מספיק זמן רב מפסיק לדעת כמה הוא צריך.</p>`);
   });
 
+  /* פער בין הדליים · עבר לכאן כשמד הדלי עבר לתחנה 01 */
+  const tanks = C.p.map((p,i)=>+val(v.tank,i)).filter(Boolean);
+  if(tanks.length === 2 && Math.abs(tanks[0]-tanks[1]) >= 3){
+    const low = tanks[0] < tanks[1] ? 0 : 1;
+    notes.push(`<p class="combo miss"><b>הדליים שלכם רחוקים.</b> ${esc(C.p[low].name||'·')} על ${tanks[low]} ` +
+      `ו${esc(C.p[1-low].name||'·')} על ${tanks[1-low]}. זה אומר ששניכם חיים באותו בית ולא באותה זוגיות, ` +
+      `ושמי שמלא יותר כנראה לא יודע את זה.</p>`);
+  }
+
   return `<figure class="vis"><figcaption>${esc(v.title)}</figcaption>
     <div class="lgrid">${cols}</div>${notes.join('')}</figure>`;
 }
 
-/* מה הנחנו אחד על השנייה · תחנה 02 */
+/* מה הנחנו אחד על השנייה · לא בשימוש מאז שהניחוש הוסר. נשמר למקרה שיחזור. */
 function visMirror(v){
   if(!(val(v.guess,0) && val(v.guess,1)))
     return visHint(v, 'התמונה תיבנה כאן ברגע ששניכם תנחשו את השפה של מי שמולכם.');
