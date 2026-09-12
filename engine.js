@@ -949,7 +949,7 @@ function renderNames(){
         <div class="field" style="margin-bottom:0">
           <label>${i===0?'היא':'הוא'}</label>
           <input type="text" data-act="name" data-i="${i}" value="${esc(p.name)}"
-            placeholder="${i===0?'השם שלה':'השם שלו'}" autocomplete="off">
+            placeholder="השם שלך" autocomplete="off">
         </div>
       </div>`).join('');
 

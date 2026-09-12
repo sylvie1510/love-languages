@@ -745,3 +745,11 @@ a.station.done .t::after{content:" ✓";color:var(--crimson);font-size:.7em;vert
 }
 /* הנעילה עצמה · פחות דהויה, כדי שייראה מכוון ולא שבור */
 .locked{opacity:.45;pointer-events:none;transition:opacity .4s}
+
+/* ---------- תיקוני רשת · תאים ריקים שנחשפו ---------- */
+/* חמישה כרטיסים בשתי עמודות השאירו משבצת ריקה. האחרון תופס שורה שלמה. */
+@media(min-width:640px){ .langs .lang:last-child{grid-column:1/-1} }
+/* המרווח מתחת לכפתורי המצב חשף את רקע הרשת כפס אפור */
+.modepick{margin-bottom:0;padding-bottom:1.4rem}
+/* שלוש הבטחות בשתי עמודות · האחרונה תופסת שורה שלמה */
+@media(min-width:560px){ .promises > div:last-child:nth-child(odd){grid-column:1/-1} }
