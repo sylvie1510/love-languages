@@ -292,11 +292,29 @@ W.matrix = (el) => {
   const opts = window[el.dataset.scale] || [];
   /* data-only="deficit" מצמצם למה שסומן ״חסר מאוד״ קודם — מדידה חוזרת ממוקדת */
   const onlyF = el.dataset.only;
+  /* data-top="2" מצמצם לשתי השפות המובילות של כל אחד:
+     זו שנבחרה בשאלת ההכרעה, ואחריה החזקה ביותר בשאלון שאינה היא. */
+  const topN = +(el.dataset.top || 0);
+  const topFor = (i) => {
+    const prim = val('primary', i);
+    const rank = quizRank('quiz', i).filter(x => x.n > 0);
+    const ids = [];
+    if(prim) ids.push(prim);
+    rank.forEach(x => { if(ids.indexOf(x.id) < 0 && ids.length < topN) ids.push(x.id); });
+    return ids.slice(0, topN);
+  };
   el.className = 'pair';
   el.innerHTML = people(el).map((p,i)=>{
     const cur = list(f,i);
     const prev = onlyF ? list(onlyF,i) : null;
-    const rows = prev ? allRows.filter((r,k)=> prev[k]==='lots') : allRows;
+    let rows = prev ? allRows.filter((r,k)=> prev[k]==='lots') : allRows;
+    if(topN){
+      const ids = topFor(i);
+      /* הסדר הוא סדר הבחירה: השפה העיקרית ראשונה, ואחריה החזקה שאחריה */
+      rows = ids.map(id => allRows.find(r => r.id === id)).filter(Boolean);
+      if(!rows.length) return `<div><div class="pname">${esc(p.name)||'·'}</div>
+        <p class="tiny">צריך קודם לבחור שפה עיקרית בתחנה 01, ואז שתי המובילות שלך יופיעו כאן.</p></div>`;
+    }
     if(onlyF && !rows.length) return `<div><div class="pname">${esc(p.name)||'·'}</div>
       <p class="tiny">לא סימנת שום שפה כ״חסרה מאוד״ בתחנה 02, אז אין כאן מה למדוד שוב. זה סימן טוב.</p></div>`;
     const idxOf = r => allRows.indexOf(r);
